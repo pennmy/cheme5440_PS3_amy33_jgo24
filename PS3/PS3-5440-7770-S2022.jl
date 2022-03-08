@@ -299,8 +299,6 @@ begin
 	Eₒ_c2 = 0.01 # units: μmol/gDW
 	u_c2 = ones(6)
 	E_c2 = Eₒ_c2.*u_c2
-	
-	flux_bounds_array_c2 = flux_bounds_array;
 
 	# setup flux bounds array -
 	flux_bounds_array_c2 = zeros(ℛ,2)
@@ -311,31 +309,28 @@ begin
 	flux_bounds_array_c2[4,2] = 88.1*E_c2[4]
 	flux_bounds_array_c2[5,2] = 13.7*E_c2[5]
 	flux_bounds_array_c2[6,2] = 13.7*E_c2[6]
-
+	
+	#change upper bounds for irreversible reactions
 	sk_sum1 = 11.9 + 96.7;
-	flux_bounds_array_c2[1,2] = flux_bounds_array_c2[1,2]*((sk_sum1)/(sk_sum1+2-1));#*E_c2[1];
-	#flux_bounds_array_c2[1,1] = flux_bounds_array_c2[1,2];
+	flux_bounds_array_c2[1,2] = flux_bounds_array_c2[1,2]*((sk_sum1)/(sk_sum1+2-1));
 	
 	sk_sum2 = 0.0915 + 0.0852;
-	flux_bounds_array_c2[2,2] = flux_bounds_array_c2[2,2]*((sk_sum2)/(sk_sum2+2-1));#*E_c2[2];
-	#flux_bounds_array_c2[2,1] = flux_bounds_array_c2[2,2];
+	flux_bounds_array_c2[2,2] = flux_bounds_array_c2[2,2]*((sk_sum2)/(sk_sum2+2-1));
 	
 	sk_sum3 = 1.39 + 0.165;
-	flux_bounds_array_c2[3,2] = flux_bounds_array_c2[3,2]*((sk_sum3)/(sk_sum3+2-1));#*E_c2[3];
-	#flux_bounds_array_c2[3,1] = flux_bounds_array_c2[3,2];
+	flux_bounds_array_c2[3,2] = flux_bounds_array_c2[3,2]*((sk_sum3)/(sk_sum3+2-1));
 	
 	sk_sum4 = 2.81 + 0.0119;
-	flux_bounds_array_c2[4,2] = flux_bounds_array_c2[4,2]*((sk_sum4)/(sk_sum4+2-1));#*E_c2[4];
-	#flux_bounds_array_c2[4,1] = flux_bounds_array_c2[4,2];
-
+	flux_bounds_array_c2[4,2] = flux_bounds_array_c2[4,2]*((sk_sum4)/(sk_sum4+2-1));
+	
 	# setup species bounds array -
 	species_bounds_array_c2 = zeros(ℳ,2);
 
-	#S
-	S_c2 = S
+	# O2 uptake -
+	flux_bounds_array_c2[15,2] = 0.25
 
 	# compute the flux -
-	result_case_2 = lib.flux(S_c2,flux_bounds_array_c2,species_bounds_array_c2,c_vector);
+	result_case_2 = lib.flux(S,flux_bounds_array_c2,species_bounds_array_c2,c_vector);
 
 	# show -
 	nothing
