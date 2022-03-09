@@ -4,6 +4,12 @@
 using Markdown
 using InteractiveUtils
 
+# ╔═╡ 71a82071-b695-4597-a48f-5681e8ee03fb
+md"""
+Amy You (amy33) and Julia O'Connor (jgo24)
+3/8/2022
+"""
+
 # ╔═╡ 2babb04c-7f14-4c30-a4f9-348ed31d4fbf
 md"""
 ### Flux Balance Analysis of the Urea Cycle
@@ -65,6 +71,11 @@ To answer this question, let's take advantage of the features of [DataFrames](ht
 # ╔═╡ 52250c83-5cbe-4ee4-b5a5-ca98385b7160
 md"""
 ##### Computation C2
+"""
+
+# ╔═╡ 35faff19-5f6e-4f08-a8c1-d733b5a7fefb
+md"""
+Using the provided value of 0.25 mol/gDW-s gives no optimal solution. The optimal solution is only found when there is no oxygen uptake. Based on this information, it is possible that these are reactions that only occur in anaerobic conditions.
 """
 
 # ╔═╡ 70239f9d-1ea8-4ad2-92a3-126cd99de4f0
@@ -223,6 +234,7 @@ begin
 
 	# show -
 	nothing
+	
 end
 
 # ╔═╡ 4dce933f-693c-4788-9c77-63784871a4c0
@@ -295,45 +307,38 @@ end
 # ╔═╡ 986cdc45-722a-4f79-ba6e-b649146d9eec
 begin
 
-	# E - 
-	Eₒ_c2 = 0.01 # units: μmol/gDW
-	u_c2 = ones(6)
-	E_c2 = Eₒ_c2.*u_c2
-
 	# setup flux bounds array -
 	flux_bounds_array_c2 = zeros(ℛ,2)
 	flux_bounds_array_c2[:,2] .= 100.0 # default value is 100 for flux units: μmol/gDW-s
-	flux_bounds_array_c2[1,2] = 203.0*E_c2[1]
-	flux_bounds_array_c2[2,2] = 34.5*E_c2[2]
-	flux_bounds_array_c2[3,2] = 249.0*E_c2[3]
-	flux_bounds_array_c2[4,2] = 88.1*E_c2[4]
-	flux_bounds_array_c2[5,2] = 13.7*E_c2[5]
-	flux_bounds_array_c2[6,2] = 13.7*E_c2[6]
+	flux_bounds_array_c2[1,2] = 203.0*E[1]
+	flux_bounds_array_c2[2,2] = 34.5*E[2]
+	flux_bounds_array_c2[3,2] = 249.0*E[3]
+	flux_bounds_array_c2[4,2] = 88.1*E[4]
+	flux_bounds_array_c2[5,2] = 13.7*E[5]
+	flux_bounds_array_c2[6,2] = 13.7*E[6]
 	
 	#change upper bounds for irreversible reactions
-	sk_sum1 = 11.9 + 96.7;
-	flux_bounds_array_c2[1,2] = flux_bounds_array_c2[1,2]*((sk_sum1)/(sk_sum1+2-1));
+	sk_prod1 = 11.9 * 96.7;
+	flux_bounds_array_c2[1,2] = flux_bounds_array_c2[1,2]*(sk_prod1/((11.9+1)*(96.7+1)-1));
 	
-	sk_sum2 = 0.0915 + 0.0852;
-	flux_bounds_array_c2[2,2] = flux_bounds_array_c2[2,2]*((sk_sum2)/(sk_sum2+2-1));
+	sk_prod2 = 0.0915 * 0.0852;
+	flux_bounds_array_c2[2,2] = flux_bounds_array_c2[2,2]*(sk_prod2/(((0.0915+1)*(0.0852+1))-1));
 	
-	sk_sum3 = 1.39 + 0.165;
-	flux_bounds_array_c2[3,2] = flux_bounds_array_c2[3,2]*((sk_sum3)/(sk_sum3+2-1));
+	sk_prod3 = 1.39 * 0.165;
+	flux_bounds_array_c2[3,2] = flux_bounds_array_c2[3,2]*(sk_prod3/(((1.39+1)*(0.165+1))-1));
 	
-	sk_sum4 = 2.81 + 0.0119;
-	flux_bounds_array_c2[4,2] = flux_bounds_array_c2[4,2]*((sk_sum4)/(sk_sum4+2-1));
-	
-	# setup species bounds array -
-	species_bounds_array_c2 = zeros(ℳ,2);
+	sk_prod4 = 2.81 * 0.0119;
+	flux_bounds_array_c2[4,2] = flux_bounds_array_c2[4,2]*(sk_prod4/(((2.81+1)*(0.0119+1))-1));
 
 	# O2 uptake -
-	flux_bounds_array_c2[15,2] = 0.25
-
+	#flux_bounds_array_c2[15,1] = 0.25
+	
 	# compute the flux -
-	result_case_2 = lib.flux(S,flux_bounds_array_c2,species_bounds_array_c2,c_vector);
+	result_case_2 = lib.flux(S,flux_bounds_array_c2,species_bounds_array,c_vector);
 
 	# show -
 	nothing
+
 	
 end
 
@@ -1930,6 +1935,7 @@ version = "0.9.1+5"
 """
 
 # ╔═╡ Cell order:
+# ╟─71a82071-b695-4597-a48f-5681e8ee03fb
 # ╟─2babb04c-7f14-4c30-a4f9-348ed31d4fbf
 # ╠═0fe1a22d-a333-4834-88be-92180c39bbb3
 # ╟─54d23ccb-211c-4716-a80c-2c087198232d
@@ -1941,15 +1947,16 @@ version = "0.9.1+5"
 # ╠═4dce933f-693c-4788-9c77-63784871a4c0
 # ╠═70d11054-4d8a-4dcc-a8cd-1f762c2dd9b8
 # ╟─12eef416-b3ab-4f03-8ac0-a9783dcca9bd
-# ╠═880ce921-308b-4e3c-8bd9-fb9d07d18bd3
-# ╠═07ca2450-8a84-4e71-adcf-91b12a1544ee
+# ╟─880ce921-308b-4e3c-8bd9-fb9d07d18bd3
+# ╟─07ca2450-8a84-4e71-adcf-91b12a1544ee
 # ╟─e2917845-d956-45f0-a379-ea826caf7d88
-# ╠═85e1ac31-90cf-48da-b4d7-b6c009328084
+# ╟─85e1ac31-90cf-48da-b4d7-b6c009328084
 # ╠═f1a98cc3-9fb6-48b3-af11-89a104255ac4
 # ╟─52250c83-5cbe-4ee4-b5a5-ca98385b7160
 # ╠═986cdc45-722a-4f79-ba6e-b649146d9eec
-# ╠═807fab87-188d-4d9c-aac1-2c94336e5e0b
-# ╠═090979ea-5070-4194-b909-a40a1f45c51e
+# ╟─807fab87-188d-4d9c-aac1-2c94336e5e0b
+# ╟─090979ea-5070-4194-b909-a40a1f45c51e
+# ╟─35faff19-5f6e-4f08-a8c1-d733b5a7fefb
 # ╟─70239f9d-1ea8-4ad2-92a3-126cd99de4f0
 # ╟─cb7d76b8-85f9-4886-a4f3-3f9fb82e42dc
 # ╟─d3a2474e-f502-4247-bba6-1f7d5f88f12d
